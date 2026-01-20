@@ -22,6 +22,7 @@ in_menu = True
 console = Console()
 can_change_dir = True
 score = 0
+square_occupied = [False] * ((width - 2) * (height - 2))
 
 
 class GameObject:
@@ -113,15 +114,17 @@ def move_player():
         if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
             in_menu = True
             reset()
-            with open('leaderboard.txt', 'a') as file:
-                file.write(get_player_highscore())
         previous_time = time.time()
 
 
 def place_fruits():
     # if number of fruits is less than is set, add a new fruit
-    while len(game_contents[1]) < fruit_count:
-        game_contents[1].append(GameObject('fruit', random.randrange(0, width - 2), random.randrange(1, height - 2), '[on red] [/on red]'))
+    while len(game_contents[1]) < fruit_count and False in square_occupied:
+        x = random.randrange(0, width - 2)
+        y = random.randrange(1, height - 2)
+        if not square_occupied[(width - 2) * (y - 1) + x]:
+            game_contents[1].append(GameObject('fruit', x, y, '[on red] [/on red]'))
+            square_occupied[(width - 2) * (y - 1) + x] = True
 
 
 def get_player_highscore():
@@ -135,6 +138,7 @@ def eat_fruit():
     global score
     for fruit in game_contents[1]:
         if fruit.pos_y == game_contents[0][0].pos_y // 1 and fruit.pos_x == game_contents[0][0].pos_x // 1:
+            square_occupied[(width - 2) * int(fruit.pos_y - 1) + int(fruit.pos_x)] = False
             del game_contents[1][game_contents[1].index(fruit)]
             game_contents[0].append(GameObject('player', new_tile_x, new_tile_y, '█'))
             score += 1
@@ -146,17 +150,15 @@ def reset():
     game_contents = [[], []]
     game_contents[0].append(GameObject('player', width // 2, height // 2, '█'))
     facing = 'east'
-    row_size = int(sqrt(fruit_count) // 1)
+    row_size = int(sqrt(fruit_count))
     for y in range(row_size):
         for x in range(row_size):
             game_contents[1].append(GameObject('fruit', (width * 2) // 3 + x, height // 2 - row_size + y, '[on red] [/on red]'))
+            square_occupied[(width - 2) * ((height // 2 - row_size + y) - 1) + (width * 2) // 3 + x] = True
 
 
 reset()
 
-if not os.path.exists('leaderboard.txt'):
-    with open('leaderboard.txt', 'w') as file:
-        pass
 
 while running:
     while in_menu:
