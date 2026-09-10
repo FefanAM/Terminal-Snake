@@ -1,6 +1,8 @@
 import curses
 import time
 from assets import menu_screen
+from player import Player
+
 
 def main(stdscr):
     game_state = "START"
@@ -17,7 +19,7 @@ def main(stdscr):
         except:
             key = None
 
-        if key == 'q':
+        if key == "q":
             break
         elif key in ["\n", "\r", "KEY_ENTER"]:
             game_state = "PLAYING"
@@ -26,8 +28,12 @@ def main(stdscr):
             stdscr.addstr(0, 0, menu_screen)
             stdscr.addstr(12, 20, "PRESS ENTER TO START", curses.A_BLINK)
 
+        elif game_state == "PLAYING":
+            stdscr.clear()
+
         stdscr.refresh()
 
         time.sleep(0.015)
+
 
 curses.wrapper(main)
