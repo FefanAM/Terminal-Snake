@@ -13,6 +13,9 @@ def main(stdscr):
 
     stdscr.clear()
 
+    snake = Player()
+    direction = "right"
+
     while True:
         try:
             key = stdscr.getkey()
@@ -23,13 +26,25 @@ def main(stdscr):
             break
         elif key in ["\n", "\r", "KEY_ENTER"]:
             game_state = "PLAYING"
+            stdscr.clear()
+        elif key == "g":
+            snake.grow()
+        elif key == "w":
+            direction = "up"
+        elif key == "s":
+            direction = "down"
+        elif key == "a":
+            direction = "left"
+        elif key == "d":
+            direction = "right"
 
         if game_state == "START":
             stdscr.addstr(0, 0, menu_screen)
             stdscr.addstr(12, 20, "PRESS ENTER TO START", curses.A_BLINK)
 
         elif game_state == "PLAYING":
-            stdscr.clear()
+            snake.move(direction)
+            snake.render(stdscr)
 
         stdscr.refresh()
 
