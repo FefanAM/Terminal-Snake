@@ -2,6 +2,7 @@ import curses
 import time
 from assets import menu_screen
 from player import Player
+from fruit import Fruit
 
 
 def main(stdscr):
@@ -13,7 +14,8 @@ def main(stdscr):
 
     stdscr.clear()
 
-    snake = Player()
+    snake = Player(stdscr)
+    fruits = Fruit(stdscr)
     direction = "right"
 
     while True:
@@ -44,7 +46,7 @@ def main(stdscr):
 
         elif game_state == "PLAYING":
             snake.move(direction)
-            snake.render(stdscr)
+            snake.render()
 
         stdscr.refresh()
 
