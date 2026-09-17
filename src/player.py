@@ -1,16 +1,15 @@
 class Player:
     def __init__(self, stdscr) -> None:
-        self.body: list = [[0, 0]]
+        self.body: list = [[15, 15]]
         self.stdscr = stdscr
-        self.char: str = "#"
+        self.char: str = "██"
         self.end = None
 
     def render(self):
         for tile in self.body:
-            self.stdscr.addstr(tile[1], tile[0], self.char)
-        self.stdscr.addstr(self.body[0][1], self.body[0][0], "O")
+            self.stdscr.addstr(tile[1], tile[0] * 2, self.char)
         if self.end is not None:
-            self.stdscr.addstr(self.end[1], self.end[0], " ")
+            self.stdscr.addstr(self.end[1], self.end[0] * 2, "  ")
 
     def move(self, direction):
         if direction == "up":
@@ -27,7 +26,7 @@ class Player:
     def grow(self):
         if self.end is not None:
             self.body.append(self.end)
-            self.stdscr.addstr(self.end[1], self.end[0], self.char)
+            self.stdscr.addstr(self.end[1], self.end[0] * 2, self.char)
             self.end = None
 
     @property

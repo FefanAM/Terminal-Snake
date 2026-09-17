@@ -3,6 +3,7 @@ import time
 from assets import menu_screen
 from player import Player
 from fruit import Fruit
+from screen import Screen
 
 
 def main(stdscr):
@@ -12,11 +13,17 @@ def main(stdscr):
     curses.use_default_colors()
     curses.curs_set(0)
 
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
+
     stdscr.clear()
 
     snake = Player(stdscr)
     fruits = Fruit(stdscr)
+    screen = Screen(stdscr)
+
     direction = "right"
+    game_speed = 10
+    prev_time = 0
 
     while True:
         try:
@@ -31,13 +38,13 @@ def main(stdscr):
             stdscr.clear()
         elif key == "g":
             snake.grow()
-        elif key == "w":
+        elif key == "w" and direction != "down":
             direction = "up"
-        elif key == "s":
+        elif key == "s" and direction != "up":
             direction = "down"
-        elif key == "a":
+        elif key == "a" and direction != "right":
             direction = "left"
-        elif key == "d":
+        elif key == "d" and direction != "left":
             direction = "right"
 
         if game_state == "START":
@@ -45,8 +52,12 @@ def main(stdscr):
             stdscr.addstr(12, 20, "PRESS ENTER TO START", curses.A_BLINK)
 
         elif game_state == "PLAYING":
-            snake.move(direction)
-            snake.render()
+            screen.render_border()
+            if time.time() - prev_time >= 1 / game_speed:
+                snake.move(direction)
+                fruits.render()
+                snake.render()
+                prev_time = time.time()
 
         stdscr.refresh()
 
